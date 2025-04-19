@@ -1,0 +1,42 @@
+-- Function to dynamically find a RemoteEvent by partial name
+local function findRemoteEvent(partialName)
+    local rs = game:GetService("ReplicatedStorage") -- Common location for RemoteEvents
+    local ws = game:GetService("Workspace") -- Another potential location
+
+    -- Search in ReplicatedStorage
+    for _, obj in ipairs(rs:GetDescendants()) do
+        if obj:IsA("RemoteEvent") and string.find(obj.Name, partialName, 1, true) then
+            print("Found RemoteEvent: " .. obj.Name .. " in ReplicatedStorage")
+            return obj
+        end
+    end
+
+    -- Search in Workspace if not found in ReplicatedStorage
+    for _, obj in ipairs(ws:GetDescendants()) do
+        if obj:IsA("RemoteEvent") and string.find(obj.Name, partialName, 1, true) then
+            print("Found RemoteEvent: " .. obj.Name .. " in Workspace")
+            return obj
+        end
+    end
+
+    -- Return nil if no matching RemoteEvent is found
+    warn("RemoteEvent not found with partial name: " .. partialName)
+    return nil
+end
+
+-- Main script to spawn a fruit
+local function spawnFruit(fruitName)
+    -- Find the RemoteEvent dynamically
+    local fruitRemote = findRemoteEvent("Fruit") -- Adjust "Fruit" if the name has changed
+
+    if fruitRemote then
+        -- Fire the RemoteEvent to spawn the fruit
+        print("Spawning fruit: " .. fruitName)
+        fruitRemote:FireServer(fruitName)
+    else
+        print("Could not find the RemoteEvent for spawning fruits. Please check the game's structure.")
+    end
+end
+
+-- Example usage: Spawn a Bomb fruit
+spawnFruit("Bomb") -- Replace "Bomb" with the desired fruit name (e.g., "Dragon", "Leopard", etc.)
